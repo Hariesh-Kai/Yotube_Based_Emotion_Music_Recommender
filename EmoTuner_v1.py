@@ -3,9 +3,11 @@ import tensorflow as tf
 from PIL import Image
 import numpy as np
 from googleapiclient.discovery import build
+import os
+
 
 # Load the emotion detection model
-model = tf.keras.models.load_model("D:/Emotion-Based-Music-Recommender-main/models/emotion_model.h5")
+model = tf.keras.models.load_model("./models/emotion_model.h5")
 
 # Preprocess the image for the emotion model
 def preprocess_image(image):
