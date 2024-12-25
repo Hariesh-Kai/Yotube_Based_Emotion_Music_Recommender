@@ -81,6 +81,9 @@ st.write("Upload your image, detect your emotion, fetch artists dynamically, and
 if "process_completed" not in st.session_state:
     st.session_state["process_completed"] = False
 
+if "artist_selected" not in st.session_state:
+    st.session_state["artist_selected"] = False
+
 # Placeholder for camera input
 placeholder = st.empty()
 
@@ -108,7 +111,7 @@ if not st.session_state["process_completed"]:
             st.error(f"Error processing the image: {e}")
 
 
-# Step 2: Fetch Artists
+# Step 2: Fetch Artists and Recommend Songs
 if st.session_state.get("emotion_detected"):
     st.subheader(f"Emotion Detected: {st.session_state.emotion_detected}")
     if "artists" not in st.session_state:
@@ -120,6 +123,7 @@ if st.session_state.get("emotion_detected"):
 
     # Step 3: Recommend Songs (only if an artist is selected)
     if selected_artist != "Select an Artist" and selected_artist:
+        st.session_state["artist_selected"] = True  # Mark that an artist has been selected
         st.subheader(f"Songs by {selected_artist}")
         recommendations = [
             f"<a href='{song['url']}' target='_blank'>{song['title']}</a>"
@@ -130,13 +134,18 @@ if st.session_state.get("emotion_detected"):
         else:
             st.markdown("<br>".join(recommendations), unsafe_allow_html=True)
     else:
+        st.session_state["artist_selected"] = False
         st.info("Please select an artist to view song recommendations.")
-# Step 2: Retake the image after the process is done
-if st.session_state["process_completed"]:
-    st.subheader(f"Emotion Detected: {st.session_state.get('emotion_detected', 'N/A')}")
 
-    # Button to retake the image
+# Step 4: Retake the image (available only after artist selection)
+if st.session_state["artist_selected"]:
     if st.button("Retake Image"):
         st.session_state["process_completed"] = False
+        st.session_state["artist_selected"] = False
+        st.session_state.pop("emotion_detected", None)  # Reset detected emotion
+        st.session_state.pop("artists", None)  # Reset artists list
+        st.session_state.pop("songs", None)  # Reset songs list
+        placeholder.empty()  # Clear any leftover UI elements
+
         st.session_state.pop("emotion_detected", None)  # Reset detected emotion
         placeholder.empty()  # Clear any leftover UI elements
