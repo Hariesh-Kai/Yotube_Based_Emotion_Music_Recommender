@@ -2,6 +2,5 @@ streamlit
 tensorflow
 pillow
 numpy
-opencv-python
 google-api-python-client
 opencv-python-headless
